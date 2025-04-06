@@ -603,7 +603,13 @@ class RayPPOTrainer(object):
                 data_source_lst.append(
                     test_batch.non_tensor_batch.get('data_source', ['unknown'] * reward_tensor.shape[0]))
         else:
+            from datetime import datetime
+
+            batch_cnt = 0
             for batch_dict in self.val_dataloader:
+                batch_cnt += 1
+                print(datetime.now().strftime('%Y-%m-%d, %H:%M:%S'), 'running batch', batch_cnt)
+
                 timing_raw = {}
                 test_batch: DataProto = DataProto.from_single_dict(batch_dict)
 
@@ -647,15 +653,15 @@ class RayPPOTrainer(object):
                         )
                     print('validation generation end')
 
-                    # Store generated outputs
-                    output_ids = final_gen_batch_output.batch['responses']
-                    output_texts = [self.tokenizer.decode(ids, skip_special_tokens=True) for ids in output_ids]
-                    sample_outputs.extend(output_texts)
-
                     test_batch = test_batch.union(final_gen_batch_output)
 
                     for key in test_batch.batch.keys():
                         test_batch.batch[key] = test_batch.batch[key].long()
+
+                    # Store generated outputs
+                    output_ids = test_batch.batch['responses']
+                    output_texts = [self.tokenizer.decode(ids, skip_special_tokens=True) for ids in output_ids]
+                    sample_outputs.extend(output_texts)
 
                     # evaluate using reward_function
                     reward_tensor = self.val_reward_fn(test_batch)
