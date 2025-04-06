@@ -531,8 +531,8 @@ class RayPPOTrainer(object):
             is_validation=True,
         )
 
+        reward_tensor_lst = []
         data_source_lst = []
-        reward_extra_infos_dict: dict[str, list] = defaultdict(list)
 
         # Lists to collect samples for the table
         sample_inputs = []
@@ -593,16 +593,15 @@ class RayPPOTrainer(object):
                 test_batch = test_batch.union(test_output_gen_batch)
 
                 # evaluate using reward_function
-                result = self.val_reward_fn(test_batch, return_dict=True)
-                reward_tensor = result["reward_tensor"]
+                reward_tensor = self.val_reward_fn(test_batch)
+
+                # Store scores
                 scores = reward_tensor.sum(-1).cpu().tolist()
                 sample_scores.extend(scores)
-                if "reward_extra_info" in result:
-                    reward_extra_infos_dict["final_reward"].extend(scores)
-                    for key, lst in result["reward_extra_info"].items():
-                        reward_extra_infos_dict[key].extend(lst)
 
-                data_source_lst.append(test_batch.non_tensor_batch.get('data_source', ['unknown'] * reward_tensor.shape[0]))
+                reward_tensor_lst.append(reward_tensor)
+                data_source_lst.append(
+                    test_batch.non_tensor_batch.get('data_source', ['unknown'] * reward_tensor.shape[0]))
         else:
             for batch_dict in self.val_dataloader:
                 timing_raw = {}
@@ -659,41 +658,32 @@ class RayPPOTrainer(object):
                         test_batch.batch[key] = test_batch.batch[key].long()
 
                     # evaluate using reward_function
-                    result = self.val_reward_fn(test_batch, return_dict=True)
-                    reward_tensor = result["reward_tensor"]
+                    reward_tensor = self.val_reward_fn(test_batch)
+
+                    # Store scores
                     scores = reward_tensor.sum(-1).cpu().tolist()
                     sample_scores.extend(scores)
-                    if "reward_extra_info" in result:
-                        reward_extra_infos_dict["final_reward"].extend(scores)
-                        for key, lst in result["reward_extra_info"].items():
-                            reward_extra_infos_dict[key].extend(lst)
 
+                    reward_tensor_lst.append(reward_tensor)
                     data_source_lst.append(
                         test_batch.non_tensor_batch.get('data_source', ['unknown'] * reward_tensor.shape[0]))
 
         self._maybe_log_val_generations(inputs=sample_inputs, outputs=sample_outputs, scores=sample_scores)
 
-        for lst in reward_extra_infos_dict.values():
-            assert len(lst) == 0 or len(lst) == len(sample_scores)
-
+        reward_tensor = torch.cat(reward_tensor_lst, dim=0).sum(-1).cpu()  # (batch_size,)
         data_sources = np.concatenate(data_source_lst, axis=0)
 
-        data_src2var2metric2val = process_validation_metrics(data_sources, sample_inputs, reward_extra_infos_dict)
+        # evaluate test_score based on data source
+        data_source_reward = {}
+        for i in range(reward_tensor.shape[0]):
+            data_source = data_sources[i]
+            if data_source not in data_source_reward:
+                data_source_reward[data_source] = []
+            data_source_reward[data_source].append(reward_tensor[i].item())
 
         metric_dict = {}
-        for data_source, var2metric2val in data_src2var2metric2val.items():
-            core_var = "acc" if "acc" in var2metric2val else "final_reward"
-            for var_name, metric2val in var2metric2val.items():
-                n_max = max([int(name.split("@")[-1].split("/")[0]) for name in metric2val.keys()])
-                for metric_name, metric_val in metric2val.items():
-                    if var_name == core_var and any(
-                            metric_name.startswith(pfx)
-                            for pfx in ["mean", "std", "maj", "best"]) and f"@{n_max}/" in metric_name:
-                        metric_sec = "val-core"
-                    else:
-                        metric_sec = "val-aux"
-                    pfx = f"{metric_sec}/{data_source}/{var_name}/{metric_name}"
-                    metric_dict[pfx] = metric_val
+        for data_source, rewards in data_source_reward.items():
+            metric_dict[f'val/test_score/{data_source}'] = np.mean(rewards)
 
         return metric_dict
 
