@@ -146,35 +146,30 @@ class TaskRunner:
             mapping[Role.RefPolicy] = global_pool_id
 
         reward_manager_name = config.reward_model.get("reward_manager", "naive")
-        if reward_manager_name == 'qa':
-            from verl.workers.reward_manager import QARewardManager
-            reward_fn = QARewardManager(tokenizer=tokenizer, num_examine=0)
-            val_reward_fn = QARewardManager(tokenizer=tokenizer, num_examine=1)
+        if reward_manager_name == 'naive':
+            from verl.workers.reward_manager import NaiveRewardManager
+            reward_manager_cls = NaiveRewardManager
+        elif reward_manager_name == 'prime':
+            from verl.workers.reward_manager import PrimeRewardManager
+            reward_manager_cls = PrimeRewardManager
+        elif reward_manager_name == 'dapo':
+            from verl.workers.reward_manager import DAPORewardManager
+            reward_manager_cls = DAPORewardManager
         else:
-            if reward_manager_name == 'naive':
-                from verl.workers.reward_manager import NaiveRewardManager
-                reward_manager_cls = NaiveRewardManager
-            elif reward_manager_name == 'prime':
-                from verl.workers.reward_manager import PrimeRewardManager
-                reward_manager_cls = PrimeRewardManager
-            elif reward_manager_name == 'dapo':
-                from verl.workers.reward_manager import DAPORewardManager
-                reward_manager_cls = DAPORewardManager
-            else:
 
-                raise NotImplementedError
+            raise NotImplementedError
 
-            compute_score = get_custom_reward_fn(config)
-            reward_fn = reward_manager_cls(tokenizer=tokenizer,
-                                           num_examine=0,
+        compute_score = get_custom_reward_fn(config)
+        reward_fn = reward_manager_cls(tokenizer=tokenizer,
+                                       num_examine=0,
+                                       compute_score=compute_score,
+                                       reward_fn_key=config.data.reward_fn_key)
+
+        # Note that we always use function-based RM for validation
+        val_reward_fn = reward_manager_cls(tokenizer=tokenizer,
+                                           num_examine=1,
                                            compute_score=compute_score,
                                            reward_fn_key=config.data.reward_fn_key)
-
-            # Note that we always use function-based RM for validation
-            val_reward_fn = reward_manager_cls(tokenizer=tokenizer,
-                                               num_examine=1,
-                                               compute_score=compute_score,
-                                               reward_fn_key=config.data.reward_fn_key)
         resource_pool_manager = ResourcePoolManager(resource_pool_spec=resource_pool_spec, mapping=mapping)
 
         trainer = RayPPOTrainer(config=config,
