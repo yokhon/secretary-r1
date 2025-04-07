@@ -22,6 +22,7 @@ class GenerationConfig:
     no_think_rl: bool = False
     search_url: str = None
     topk: int = 3
+    query_type: str = 'classifier'  # or 'math', 'search' for now
 
 
 class LLMGenerationManager:
@@ -457,7 +458,8 @@ If I want to give the final answer, I should put the answer between <answer> and
         payload = {
             "queries": queries,
             "topk": self.config.topk,
-            "return_scores": True
+            "return_scores": True,
+            "query_type": self.config.query_type,
         }
 
         return requests.post(self.config.search_url, json=payload).json()

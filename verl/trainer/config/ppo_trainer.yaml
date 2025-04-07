@@ -110,8 +110,8 @@ actor_rollout_ref:
     val_kwargs:
       # sampling parameters for validation
       top_k: -1 # 0 for hf rollout, -1 for vllm rollout
-      top_p: 1.0
-      temperature: 0
+      top_p: 0.95
+      temperature: 1.0
       n: 1
       do_sample: False # default eager for validation
 
@@ -223,6 +223,7 @@ trainer:
 retriever:
   url: "http://127.0.0.1:8000/retrieve"
   topk: 3
+  query_type: 'classifier'
 
 max_turns: 4
-do_search: true
+do_search: True
