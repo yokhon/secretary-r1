@@ -454,12 +454,16 @@ If I want to give the final answer, I should put the answer between <answer> and
         return [self._passages2string(result) for result in results]
 
     def _batch_search(self, queries):
-
-        payload = {
-            "queries": queries,
+        query_args = {
             "topk": self.config.topk,
             "return_scores": True,
+            "prompt_type": "tool-integrated",
+            "model_name_or_path": "/data/hyhping/Qwen/Qwen2.5-Math-7B-Instruct/",
+        }
+        payload = {
+            "queries": queries,
             "query_type": self.config.query_type,
+            "query_args": query_args,
         }
 
         return requests.post(self.config.search_url, json=payload).json()
