@@ -53,6 +53,7 @@ def make_prefix(dp, template_type):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    parser.add_argument('--source_dir', default='./data/gsm8k')
     parser.add_argument('--local_dir', default='./data/my_gsm8k')
     parser.add_argument('--hdfs_dir', default=None)
     parser.add_argument('--template_type', type=str, default='t2')
@@ -61,7 +62,11 @@ if __name__ == '__main__':
 
     data_source = 'openai/gsm8k'
 
-    dataset = datasets.load_dataset('openai/gsm8k')
+    dataset = datasets.load_dataset("parquet",
+                                    data_files={
+                                        'train': os.path.join(args.source_dir, 'train.parquet'),
+                                        'test': os.path.join(args.source_dir, 'test.parquet')
+                                    })
 
     train_dataset = dataset['train']
     test_dataset = dataset['test']
