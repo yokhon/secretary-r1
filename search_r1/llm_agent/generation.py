@@ -452,7 +452,7 @@ If I want to give the final answer, I should put the answer between <answer> and
         results = self._batch_search(queries)
 
         # return [self._passages2string(result) for result in results]
-        return [result for result['result'] in results]
+        return [result['result'] for result in results]
 
     def _batch_search(self, queries):
         query_args = {
