@@ -221,9 +221,10 @@ trainer:
 
 # for agent
 retriever:
-  url: "http://127.0.0.1:8000/retrieve"
+  url: "http://127.0.0.1:8000/query"
   topk: 3
   query_type: 'classifier'
+  prompt_type: 'tool-integrated'
 
 max_turns: 4
 do_search: True

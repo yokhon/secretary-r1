@@ -18,16 +18,27 @@ import re
 def extract_solution(solution_str, method='strict'):
     assert method in ['strict', 'flexible']
 
+    answer_pattern = r'<answer>(.*?)</answer>'
+    match = re.finditer(answer_pattern, solution_str, re.DOTALL)
+    matches = list(match)
+
+    if len(matches) == 0:
+        return None
+
+    raw_answer = matches[-1].group(1).strip()
+
     if method == 'strict':
         # this also tests the formatting of the model
-        solution = re.search("#### (\\-?[0-9\\.\\,]+)", solution_str)
-        if solution is None:
+        # solution = re.search("(\\-?[0-9\\.\\,]+)", raw_answer)
+        answer = re.search(r"(-?[\d.,]+)", raw_answer)
+        if answer is None:
             final_answer = None
         else:
-            final_answer = solution.group(0)
-            final_answer = final_answer.split('#### ')[1].replace(',', '').replace('$', '')
+            final_answer = answer.group(0)
+            final_answer = final_answer.replace(',', '').replace('$', '')
     elif method == 'flexible':
-        answer = re.findall("(\\-?[0-9\\.\\,]+)", solution_str)
+        # answer = re.findall("(\\-?[0-9\\.\\,]+)", raw_answer)
+        answer = re.findall(r"(-?[\d.,]+)", raw_answer)
         final_answer = None
         if len(answer) == 0:
             # no reward is there is no answer

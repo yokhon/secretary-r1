@@ -449,20 +449,23 @@ If I want to give the final answer, I should put the answer between <answer> and
         Returns:
             search results which is concatenated into a string
         """
-        results = self._batch_search(queries)['result']
+        results = self._batch_search(queries)
 
-        return [self._passages2string(result) for result in results]
+        # return [self._passages2string(result) for result in results]
+        return [result for result['result'] in results]
 
     def _batch_search(self, queries):
         query_args = {
             "topk": self.config.topk,
             "return_scores": True,
             "prompt_type": "tool-integrated",
-            "model_name_or_path": "/data/hyhping/Qwen/Qwen2.5-Math-7B-Instruct/",
         }
+        query_type = self.config.query_type
+        if isinstance(query_type, str):
+            query_type = [query_type] * len(queries)
         payload = {
-            "queries": queries,
-            "query_type": self.config.query_type,
+            "query": queries,
+            "query_type": query_type,
             "query_args": query_args,
         }
 
