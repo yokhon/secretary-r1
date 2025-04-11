@@ -52,9 +52,9 @@ def make_prefix(dp, template_type):
     Question: {question}\n"""
     elif template_type == 't3':
         prefix = f"""Answer the given question. You must first conduct reasoning inside <think>...</think>. \
-    If you find you lack some information or need further confirmation, you can raise a query by <query>...</query> after <think>...</think>. Some questions may benefit from breaking down into multiple queries.\
-    A junior helper with skills (such as searching the Internet or using a calculator) will handle the query and return the result. You can raise queries as many times as you want. \
-    When you have the final answer, you can output the answer inside <answer>...</answer>, without detailed illustrations. For example, <answer> Beijing </answer>. \
+    If you find you lack some information or need further confirmation, you can raise a query by <query>...</query> after <think>...</think>. \
+    Some questions may benefit from breaking down into several queries. A junior helper with skills (such as searching the Internet or using a calculator) will handle the query and return the result. \
+    Once you have enough information, output the answer inside <answer>...</answer>, without detailed illustrations. For example, <answer> 13 </answer>. \
     \n \
     Output format for raise query: \
     <think>...</think><query>...</query> \
