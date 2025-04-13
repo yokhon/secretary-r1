@@ -23,6 +23,8 @@ class GenerationConfig:
     search_url: str = None
     topk: int = 3
     query_type: str = 'classifier'  # or 'math', 'search' for now
+    prompt_type: str = 'tool-integrated'
+    only_answer: bool = True
 
 
 class LLMGenerationManager:
@@ -458,7 +460,8 @@ If I want to give the final answer, I should put the answer between <answer> and
         query_args = {
             "topk": self.config.topk,
             "return_scores": True,
-            "prompt_type": "tool-integrated",
+            "prompt_type": self.config.prompt_type,
+            "only_answer": self.config.only_answer,
         }
         query_type = self.config.query_type
         if isinstance(query_type, str):

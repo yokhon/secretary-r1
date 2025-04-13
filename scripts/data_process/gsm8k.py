@@ -142,7 +142,7 @@ if __name__ == '__main__':
 
     train_dataset = dataset['train']
     if args.numbers > 0:
-        test_dataset = dataset['train'][:args.numbers]
+        test_dataset = dataset['train'].select(list(range(args.numbers)))
     else:
         test_dataset = dataset['test']
 

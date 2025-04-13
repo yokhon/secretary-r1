@@ -535,6 +535,8 @@ class RayPPOTrainer(object):
             search_url=self.config.retriever.url,
             topk=self.config.retriever.topk,
             query_type=self.config.retriever.query_type,
+            prompt_type=self.config.retriever.prompt_type,
+            only_answer=self.config.retriever.only_answer,
         )
         print('GenerationConfig, max_turns:', self.config.max_turns, 'query_type:', self.config.retriever.query_type)
 
