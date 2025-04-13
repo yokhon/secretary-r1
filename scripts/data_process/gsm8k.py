@@ -40,29 +40,51 @@ def make_prefix(dp, template_type):
         If you find no further external knowledge needed, you can directly provide the answer inside <answer> and </answer>, without detailed illustrations. For example, <answer> Beijing </answer>. Question: {question}\n"""
     elif template_type == 't2':
         prefix = f"""Answer the given question. You can raise query to answer the question. A junior helper with skills (such as searching the Internet or coding) will handle the query and return the result. You can raise queries as many times as you want. \
-    You must first conduct reasoning inside <think>...</think>. If you find you lack some information, you can raise a query by <query>...</query> after <think>...</think>. \
-    When you have the final answer, you can output the answer inside <answer>...</answer>, without detailed illustrations. For example, <answer> Beijing </answer>. \
-    \n \
-    Output format for raise query: \
-    <think>...</think><query>...</query> \
-    \n \
-    Output format for answer: \
-    <think>...</think><answer>...</answer> \
-    \n \
-    Question: {question}\n"""
+        You must first conduct reasoning inside <think>...</think>. If you find you lack some information, you can raise a query by <query>...</query> after <think>...</think>. \
+        When you have the final answer, you can output the answer inside <answer>...</answer>, without detailed illustrations. For example, <answer> Beijing </answer>. \
+        \n \
+        Output format for raise query: \
+        <think>...</think><query>...</query> \
+        \n \
+        Output format for answer: \
+        <think>...</think><answer>...</answer> \
+        \n \
+        Question: {question}\n"""
     elif template_type == 't3':
         prefix = f"""Answer the given question. You must first conduct reasoning inside <think>...</think>. \
-    If you find you lack some information or need further confirmation, you can raise a query by <query>...</query> after <think>...</think>. \
-    Some questions may benefit from breaking down into several queries. A junior helper with skills (such as searching the Internet or using a calculator) will handle the query and return the result. \
-    Once you have enough information, output the answer inside <answer>...</answer>, without detailed illustrations. For example, <answer> 13 </answer>. \
-    \n \
-    Output format for raise query: \
-    <think>...</think><query>...</query> \
-    \n \
-    Output format for answer: \
-    <think>...</think><answer>...</answer> \
-    \n \
-    Question: {question}\n"""
+        If you find you lack some information or need further validation, you can raise a query by <query>...</query> after <think>...</think>. \
+        Some questions may benefit from breaking down into several queries. A junior helper with skills (such as searching the Internet or using a calculator) will handle the query and return the result. \
+        Once you have enough information, output the answer inside <answer>...</answer>, without detailed illustrations. For example, <answer> 13 </answer>. \
+        \n \
+        Output format for raise query: \
+        <think>...</think><query>...</query> \
+        \n \
+        Output format for answer: \
+        <think>...</think><answer>...</answer> \
+        \n \
+        Question: {question}\n"""
+    elif template_type == 't4':
+        prefix = f"""Answer the given question. You must first conduct reasoning inside <think>...</think>. \
+        If you find you lack some information or need further validation, you can raise a query by <query>...</query> after <think>...</think>. \
+        Some questions may benefit from breaking down into several queries. A junior helper with tools (such as search engine or calculator) will handle the query and return the result. \
+        When you have the final answer, output the answer inside <answer>...</answer>, without detailed illustrations. For example, <answer> 13 </answer>. \
+        \n \
+        Output format for raise query: \
+        <think>...</think><query>...</query> \
+        \n \
+        Output format for answer: \
+        <think>...</think><answer>...</answer> \
+        \n \
+        Question: {question}\n"""
+    elif template_type == 'swirl':
+        prefix = f"""Please help me answer the following question in just a few words. \
+        If you think it would help to use a calculator, please generate a mathematical query enclosed by <query>MATH EXP</query> tags. \
+        Some questions may benefit from using a calculator multiple times in order to answer, so I will allow you to make up to 10 sequential queries before answering the question. \
+        Please do not repeat queries you have already issued, as this is a waste of time. \
+        I will provide results in the following format: <information>RESULT</information>. \
+        Once you have enough information, generate an answer enclosed by <answer>ANSWER</answer> tags. \
+        Please either issue a search query or answer the question, but not both. \
+        The question is: {question}\n"""
     else:
         raise NotImplementedError
     return prefix
@@ -74,6 +96,7 @@ if __name__ == '__main__':
     parser.add_argument('--local_dir', default='./data/my_gsm8k')
     parser.add_argument('--hdfs_dir', default=None)
     parser.add_argument('--template_type', type=str, default='t2')
+    parser.add_argument('--numbers', type=int, default=-1)
 
     args = parser.parse_args()
 
@@ -84,9 +107,6 @@ if __name__ == '__main__':
                                         'train': os.path.join(args.source_dir, 'train.parquet'),
                                         'test': os.path.join(args.source_dir, 'test.parquet')
                                     })
-
-    train_dataset = dataset['train']
-    test_dataset = dataset['test']
 
     # add a row to each data item that represents a unique id
     def make_map_fn(split):
@@ -119,6 +139,12 @@ if __name__ == '__main__':
             return data
 
         return process_fn
+
+    train_dataset = dataset['train']
+    if args.numbers > 0:
+        test_dataset = dataset['train'][:args.numbers]
+    else:
+        test_dataset = dataset['test']
 
     train_dataset = train_dataset.map(function=make_map_fn('train'), with_indices=True)
     test_dataset = test_dataset.map(function=make_map_fn('test'), with_indices=True)

@@ -240,6 +240,19 @@ def _timer(name: str, timing_raw: Dict[str, float]):
     timing_raw[name] = timer.last
 
 
+def save_val_generations_jsonl(sample_inputs, sample_outputs, sample_scores, file_name):
+    l = len(sample_inputs)
+    assert l == len(sample_outputs) == len(sample_scores)
+    with open(file_name, 'w') as f:
+        for i in range(l):
+            d = {
+                'input': sample_inputs[i],
+                'output': sample_outputs[i],
+                'score': sample_scores[i]
+            }
+            f.write(f'{d}\n')
+
+
 class RayPPOTrainer(object):
     """
     Note that this trainer runs on the driver process on a single CPU/GPU node.
@@ -676,6 +689,9 @@ class RayPPOTrainer(object):
                     data_source_lst.append(
                         test_batch.non_tensor_batch.get('data_source', ['unknown'] * reward_tensor.shape[0]))
 
+        if self.config.actor_rollout_ref.rollout.val_kwargs.save_jsonl:
+            save_val_generations_jsonl(sample_inputs, sample_outputs, sample_scores,
+                                       self.config.actor_rollout_ref.rollout.val_kwargs.save_jsonl)
         self._maybe_log_val_generations(inputs=sample_inputs, outputs=sample_outputs, scores=sample_scores)
 
         reward_tensor = torch.cat(reward_tensor_lst, dim=0).sum(-1).cpu()  # (batch_size,)
@@ -940,6 +956,7 @@ class RayPPOTrainer(object):
                 timing_raw = {}
 
                 batch: DataProto = DataProto.from_single_dict(batch_dict)
+                batch = batch.repeat(repeat_times=self.config.actor_rollout_ref.rollout.n_agent, interleave=True)
 
                 # pop those keys for generation
                 if 'multi_modal_inputs' in batch.non_tensor_batch.keys():
