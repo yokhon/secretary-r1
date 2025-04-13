@@ -226,6 +226,7 @@ retriever:
   topk: 3
   query_type: 'classifier'
   prompt_type: 'tool-integrated'
+  only_answer: True
 
 max_turns: 4
 do_search: True
