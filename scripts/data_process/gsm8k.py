@@ -85,6 +85,15 @@ def make_prefix(dp, template_type):
         Once you have enough information, generate an answer enclosed by <answer>ANSWER</answer> tags. \
         Please either issue a search query or answer the question, but not both. \
         The question is: {question}\n"""
+    elif template_type == 'swirl-v2':
+        prefix = f"""Please help me answer the following question in just a few words. \
+        If you think it would help to use a calculator, please generate a mathematical query enclosed by <math_exp>MATH EXP</math_exp> tags. \
+        Some questions may benefit from using a calculator multiple times in order to answer, so I will allow you to make up to 10 sequential queries before answering the question. \
+        Please do not repeat queries you have already issued, as this is a waste of time. \
+        I will provide results in the following format: <information>RESULT</information>. \
+        Once you have enough information, generate an answer enclosed by <answer>ANSWER</answer> tags. \
+        Please either issue a search query or answer the question, but not both. \
+        The question is: {question}\n"""
     else:
         raise NotImplementedError
     return prefix
