@@ -230,3 +230,4 @@ retriever:
 
 max_turns: 4
 do_search: True
+tag_word: 'query'

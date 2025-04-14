@@ -25,6 +25,7 @@ class GenerationConfig:
     query_type: str = 'classifier'  # or 'math', 'search' for now
     prompt_type: str = 'tool-integrated'
     only_answer: bool = True
+    tag_word: str = 'query'
 
 
 class LLMGenerationManager:
@@ -63,8 +64,8 @@ class LLMGenerationManager:
             skip_special_tokens=True
         )
 
-        responses_str = [resp.split('</search>')[0] + '</search>'
-                         if '</search>' in resp
+        responses_str = [resp.split(f'</{self.config.tag_word}>')[0] + f'</{self.config.tag_word}>'
+                         if f'</{self.config.tag_word}>' in resp
                          else resp.split('</answer>')[0] + '</answer>'
         if '</answer>' in resp
         else resp
@@ -375,12 +376,12 @@ class LLMGenerationManager:
         cur_actions, contents = self.postprocess_predictions(predictions)
         next_obs, dones, valid_action, is_search = [], [], [], []
 
-        search_queries = [content for action, content in zip(cur_actions, contents) if action == 'search']
+        search_queries = [content for action, content in zip(cur_actions, contents) if action == self.config.tag_word]
         if do_search:
             search_results = self.batch_search(search_queries)
-            assert len(search_results) == sum([1 for action in cur_actions if action == 'search'])
+            assert len(search_results) == sum([1 for action in cur_actions if action == self.config.tag_word])
         else:
-            search_results = [''] * sum([1 for action in cur_actions if action == 'search'])
+            search_results = [''] * sum([1 for action in cur_actions if action == self.config.tag_word])
 
         for i, (action, active) in enumerate(zip(cur_actions, active_mask)):
 
@@ -395,14 +396,14 @@ class LLMGenerationManager:
                     dones.append(1)
                     valid_action.append(1)
                     is_search.append(0)
-                elif action == 'search':
+                elif action == self.config.tag_word:
                     next_obs.append(f'\n\n<information>{search_results.pop(0).strip()}</information>\n\n')
                     dones.append(0)
                     valid_action.append(1)
                     is_search.append(1)
                 else:
                     next_obs.append(f'\nMy previous action is invalid. \
-If I want to search, I should put the query between <search> and </search>. \
+If I want to query, I should put the query between <{self.config.tag_word}> and </{self.config.tag_word}>. \
 If I want to give the final answer, I should put the answer between <answer> and </answer>. Let me try again.\n')
                     dones.append(0)
                     valid_action.append(0)
@@ -427,7 +428,7 @@ If I want to give the final answer, I should put the answer between <answer> and
 
         for prediction in predictions:
             if isinstance(prediction, str):  # for llm output
-                pattern = r'<(search|answer)>(.*?)</\1>'
+                pattern = r'<(%s|answer)>(.*?)</\1>' % self.config.tag_word
                 match = re.search(pattern, prediction, re.DOTALL)
                 if match:
                     content = match.group(2).strip()  # Return only the content inside the tags

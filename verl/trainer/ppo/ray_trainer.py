@@ -537,8 +537,11 @@ class RayPPOTrainer(object):
             query_type=self.config.retriever.query_type,
             prompt_type=self.config.retriever.prompt_type,
             only_answer=self.config.retriever.only_answer,
+            tag_word=self.config.tag_word,
         )
-        print('GenerationConfig, max_turns:', self.config.max_turns, 'query_type:', self.config.retriever.query_type)
+        print('GenerationConfig, max_turns:', self.config.max_turns, 'query_type:', self.config.retriever.query_type,
+              'prompt_type:', self.config.retriever.prompt_type, 'only_answer:', self.config.retriever.only_answer,
+              'tag_word:', self.config.tag_word)
 
         # Agent config preparation
         generation_manager = LLMGenerationManager(
@@ -943,8 +946,13 @@ class RayPPOTrainer(object):
             search_url=self.config.retriever.url,
             topk=self.config.retriever.topk,
             query_type=self.config.retriever.query_type,
+            prompt_type=self.config.retriever.prompt_type,
+            only_answer=self.config.retriever.only_answer,
+            tag_word=self.config.tag_word,
         )
-        print('GenerationConfig, max_turns:', self.config.max_turns, 'query_type:', self.config.retriever.query_type)
+        print('GenerationConfig, max_turns:', self.config.max_turns, 'query_type:', self.config.retriever.query_type,
+              'prompt_type:', self.config.retriever.prompt_type, 'only_answer:', self.config.retriever.only_answer,
+              'tag_word:', self.config.tag_word)
 
         generation_manager = LLMGenerationManager(
             tokenizer=self.tokenizer,
