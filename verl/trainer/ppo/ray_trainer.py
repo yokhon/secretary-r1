@@ -241,6 +241,8 @@ def _timer(name: str, timing_raw: Dict[str, float]):
 
 
 def save_val_generations_jsonl(sample_inputs, sample_outputs, sample_scores, file_name):
+    import json
+
     l = len(sample_inputs)
     assert l == len(sample_outputs) == len(sample_scores)
     with open(file_name, 'w') as f:
@@ -250,7 +252,8 @@ def save_val_generations_jsonl(sample_inputs, sample_outputs, sample_scores, fil
                 'output': sample_outputs[i],
                 'score': sample_scores[i]
             }
-            f.write(f'{d}\n')
+            json.dump(d, f)
+            f.write('\n')
 
 
 class RayPPOTrainer(object):
