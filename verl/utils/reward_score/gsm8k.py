@@ -15,6 +15,8 @@
 import re
 
 
+TAG_WORD = 'math_exp'
+
 def extract_solution(solution_str, method='strict'):
     assert method in ['strict', 'flexible']
 
@@ -52,7 +54,17 @@ def extract_solution(solution_str, method='strict'):
     return final_answer
 
 
-def compute_score(solution_str, ground_truth, method='strict', format_score=0., score=1.):
+def correct_tag_format(solution_str):
+    pattern = r'<(%s)>(.*?)</\1>' % TAG_WORD
+    match = re.search(pattern, solution_str, re.DOTALL)
+    if match:
+        content = match.group(2).strip()  # Return only the content inside the tags
+        return True if len(content) > 0 else False
+    else:
+        return False
+
+
+def compute_score(solution_str, ground_truth, method='strict', format_score=0.1, score=1.):
     """The scoring function for GSM8k.
 
     Reference: Trung, Luong, et al. "Reft: Reasoning with reinforced fine-tuning." Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers). 2024.
@@ -65,10 +77,21 @@ def compute_score(solution_str, ground_truth, method='strict', format_score=0., 
         score: the score for the correct answer
     """
     answer = extract_solution(solution_str=solution_str, method=method)
+    # if answer is None:
+    #     return 0
+    # else:
+    #     if answer == ground_truth:
+    #         return score
+    #     else:
+    #         return format_score
     if answer is None:
+        if correct_tag_format(solution_str):
+            return format_score
         return 0
     else:
         if answer == ground_truth:
             return score
         else:
-            return format_score
+            if correct_tag_format(solution_str):
+                return format_score
+            return 0
