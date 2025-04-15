@@ -59,7 +59,7 @@ def correct_tag_format(solution_str, tag):
     match = re.search(pattern, solution_str, re.DOTALL)
     if match:
         content = match.group(2).strip()  # Return only the content inside the tags
-        return True if len(content) > 0 else False
+        return True if len(content) > 0 and content != 'and' else False
     else:
         return False
 
@@ -84,9 +84,10 @@ def compute_score(solution_str, ground_truth, method='strict', format_score=0.1,
     #         return score
     #     else:
     #         return format_score
-    correct_query = correct_tag_format(solution_str, TAG_WORD)
-    correct_answer = correct_tag_format(solution_str, 'answer')
-    total_format_score = format_score * correct_query + format_score * correct_answer * 0.5
+    correct_query_format = correct_tag_format(solution_str, TAG_WORD)
+    # correct_answer = correct_tag_format(solution_str, 'answer')
+    correct_answer_format = True if len(answer) > 0 else False
+    total_format_score = format_score * correct_query_format * 0.5 + format_score * correct_answer_format * 0.5
     if answer == ground_truth:
         return score
     else:
