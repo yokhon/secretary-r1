@@ -54,11 +54,19 @@ def extract_solution(solution_str, method='strict'):
     return final_answer
 
 
+def is_string_valid_for_calculator(input_str):
+    pattern = r'^[0-9+*/\-(). ]+$'
+    return re.fullmatch(pattern, input_str) is not None
+
+
 def correct_tag_format(solution_str, tag):
     pattern = r'<(%s)>(.*?)</\1>' % tag
     match = re.search(pattern, solution_str, re.DOTALL)
     if match:
         content = match.group(2).strip()  # Return only the content inside the tags
+        if not is_string_valid_for_calculator(content):
+            # only works for calculator
+            return False
         return True if len(content) > 0 and content != 'and' else False
     else:
         return False
