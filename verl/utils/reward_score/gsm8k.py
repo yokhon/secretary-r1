@@ -55,7 +55,7 @@ def extract_solution(solution_str, method='strict'):
 
 
 def is_string_valid_for_calculator(input_str):
-    pattern = r'^[0-9+*/\-(). ]+$'
+    pattern = r'^[x0-9+*/\-(). ]+$'
     return re.fullmatch(pattern, input_str) is not None
 
 
@@ -95,7 +95,7 @@ def compute_score(solution_str, ground_truth, method='strict', format_score=0.1,
     correct_query_format = correct_tag_format(solution_str, TAG_WORD)
     # correct_answer = correct_tag_format(solution_str, 'answer')
     correct_answer_format = True if answer is not None and len(answer) > 0 else False
-    total_format_score = format_score * correct_query_format * 0.5 + format_score * correct_answer_format * 0.5
+    total_format_score = format_score * correct_query_format * 1.0 + format_score * correct_answer_format * 0.5
     if answer == ground_truth:
         return score
     else:

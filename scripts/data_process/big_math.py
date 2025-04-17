@@ -113,7 +113,7 @@ if __name__ == '__main__':
 
     dataset = datasets.load_dataset("parquet",
                                     data_files=os.path.join(args.source_dir, 'train-00000-of-00001.parquet'))
-    dataset = dataset.train_test_split(test_size=0.15)
+    dataset = dataset['train'].train_test_split(test_size=0.15)
 
     # add a row to each data item that represents a unique id
     def make_map_fn(split):
