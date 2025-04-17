@@ -101,32 +101,32 @@ def make_prefix(dp, template_type):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--source_dir', default='./data/gsm8k')
-    parser.add_argument('--local_dir', default='./data/my_gsm8k')
+    parser.add_argument('--source_dir', default='./data/Big-Math/level_1')
+    parser.add_argument('--local_dir', default='./data/Big-Math/custom/level_1')
     parser.add_argument('--hdfs_dir', default=None)
     parser.add_argument('--template_type', type=str, default='t2')
     parser.add_argument('--numbers', type=int, default=-1)
 
     args = parser.parse_args()
 
-    data_source = 'openai/gsm8k'
+    data_source = 'Big-Math'
 
     dataset = datasets.load_dataset("parquet",
-                                    data_files={
-                                        'train': os.path.join(args.source_dir, 'train.parquet'),
-                                        'test': os.path.join(args.source_dir, 'test.parquet')
-                                    })
+                                    data_files=os.path.join(args.source_dir, 'train-00000-of-00001.parquet'))
+    dataset = dataset.train_test_split(test_size=0.15)
 
     # add a row to each data item that represents a unique id
     def make_map_fn(split):
 
         def process_fn(example, idx):
-            example['question'] = example['extra_info']['question'].strip()
+            example['question'] = example['prompt'].strip()
             if example['question'][-1] != '?':
                 example['question'] += '?'
             question = make_prefix(example, template_type=args.template_type)
-            solution = example['reward_model']['ground_truth']
-            answer = example['extra_info']['answer']
+            solution = example['solution']
+            orig_data_source = example['source']
+            domain = example['domain']
+            llama8b_solve_rate = example['llama8b_solve_rate']
 
             data = {
                 "data_source": data_source,
@@ -142,7 +142,9 @@ if __name__ == '__main__':
                 "extra_info": {
                     'split': split,
                     'index': idx,
-                    'answer': answer,
+                    'orig_data_source': orig_data_source,
+                    'domain': domain,
+                    'llama8b_solve_rate': llama8b_solve_rate,
                 }
             }
             return data
