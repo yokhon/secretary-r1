@@ -107,6 +107,17 @@ def make_prefix(dp, template_type):
         Please do not repeat queries you have already issued, as this is a waste of time. \
         When you have the final answer, you can output the answer inside <answer>...</answer>, without detailed illustrations. For example, <answer> 13 </answer>. \
         The question is: {question}\n"""
+    elif template_type == 'swirl-v5':
+        prefix = f"""Answer the given question. You must first conduct reasoning inside <think>...</think>. \
+        If you think it would help to use a calculator, please raise a mathematical query by <math_exp>...</math_exp> after <think>...</think>. Then the calculation result will be provided in <info>...</info> tags.\
+        Some questions may benefit from using a calculator multiple times in order to answer, so I will allow you to make up to 10 sequential queries before answering the question. \
+        Please do not repeat queries you have already issued, as this is a waste of time. \
+        When you have the final answer, you can output the answer inside <answer>...</answer>, without detailed illustrations. Here is an example: \
+        ### Example Start ### \
+        Question: Natalia sold clips to 48 of her friends in April, and then she sold half as many clips in May. How many clips did Natalia sell altogether in April and May? \
+        Answer: <think>Natalia sold 48/2 clips in May.</think><math_exp>48/2</math_exp><info>The result is 24.</info><think>Natalia sold 48+24 clips altogether in April and May.</think><math_exp>48+24</math_exp><info>The result is 72.</info><think>I have the answer.</think><answer>72</answer> \
+        ### Example End ### \
+        Now, please answer the following question as per the specified format: {question}\n"""
     else:
         raise NotImplementedError
     return prefix
