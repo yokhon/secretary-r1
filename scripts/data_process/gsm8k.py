@@ -50,6 +50,15 @@ def make_prefix(dp, template_type):
         <think>...</think><answer>...</answer> \
         \n \
         Question: {question}\n"""
+    elif template_type == 't2-1shot':
+        prefix = f"""Answer the given question. You can raise query to answer the question. A junior helper with skills (such as using search engine or calculator) will handle the query and return the result. You can raise queries as many times as you want. \
+        You must first conduct reasoning inside <think>...</think>. If you find you lack some information, you can raise a query by <query>...</query> after <think>...</think>. \
+        When you have the final answer, you can output the answer inside <answer>...</answer>, without detailed illustrations. Here is an example: \
+        ### Example Start ### \
+        Question: Natalia sold clips to 48 of her friends in April, and then she sold half as many clips in May. How many clips did Natalia sell altogether in April and May? \
+        Answer: <think>Natalia sold 48/2 clips in May.</think><query>48/2</query><info>The result is 24.</info><think>Natalia sold 48+24 clips altogether in April and May.</think><query>48+24</query><info>The result is 72.</info><think>I have the answer.</think><answer>72</answer> \
+        ### Example End ### \
+        Now, please answer the following question as per the specified steps and format: {question}\n"""
     elif template_type == 't3':
         prefix = f"""Answer the given question. You must first conduct reasoning inside <think>...</think>. \
         If you find you lack some information or need further validation, you can raise a query by <query>...</query> after <think>...</think>. \
