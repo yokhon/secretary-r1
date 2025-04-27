@@ -52,7 +52,8 @@ CUDA_VISIBLE_DEVICES=4,5,6,7 PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo
     critic.model.fsdp_config.param_offload=False \
     critic.model.fsdp_config.optimizer_offload=False \
     algorithm.use_kl_in_reward=False \
-    algorithm.kl_ctrl.kl_coef=0.0003 \
+    algorithm.kl_penalty=low_var_kl \
+    algorithm.kl_ctrl.kl_coef=0.001 \
     algorithm.no_think_rl=False \
     trainer.critic_warmup=0 \
     trainer.logger=['console','wandb'] \
