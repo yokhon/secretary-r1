@@ -193,8 +193,8 @@ algorithm:
     horizon: 10000
     target_kl: 0.1
   state_masking: # for agent
-    start_state_marker: "<information>"
-    end_state_marker: "</information>"
+    start_state_marker: "<info>"
+    end_state_marker: "</info>"
   no_think_rl: False # for agent
 
 trainer:
