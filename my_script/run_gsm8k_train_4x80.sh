@@ -1,13 +1,13 @@
 TRAIN_FILE=./data/my_gsm8k_swirl-v3/train.parquet
 VAL_FILE=./data/my_gsm8k_swirl-v3/test.parquet
-BASE_MODEL=/data2/share/hanxu/verl/checkpoints/agent-omni/gsm8k/sft-Llama-3.2-3B-Instruct/global_step_12
+BASE_MODEL=/data/hyhping/checkpoints/global_step_12
 BATCH_SIZE=512
 MINI_BATCH_SIZE=64
 VLLM_PARALLEL_SIZE=1
 GPU_MEMORY_UTIL=0.7
 PROJECT_NAME='secretary-r1_gsm8k'
 EXPERIMENT_NAME='ppo_sft-Llama-3.2-3B-it-step12_em_swirl-v3_cal_no-kl_fmt-ans'
-CHECKPOINT_DIR=/data2/share/hanxu/verl/checkpoints/agent-omni/gsm8k/$EXPERIMENT_NAME
+CHECKPOINT_DIR=/data/hyhping/checkpoints/agent-omni/gsm8k/$EXPERIMENT_NAME
 
 CUDA_VISIBLE_DEVICES=4,5,6,7 PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo \
     data.train_files=$TRAIN_FILE \
