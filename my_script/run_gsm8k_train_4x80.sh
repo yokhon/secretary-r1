@@ -1,12 +1,14 @@
 TRAIN_FILE=./data/my_gsm8k_swirl-v3/train.parquet
 VAL_FILE=./data/my_gsm8k_swirl-v3/test.parquet
 BASE_MODEL=/data/hyhping/checkpoints/global_step_12
-BATCH_SIZE=512
+BATCH_SIZE=128
 MINI_BATCH_SIZE=64
 VLLM_PARALLEL_SIZE=1
-GPU_MEMORY_UTIL=0.7
+GPU_MEMORY_UTIL=0.8
+N_AGENT=8
+ADV_ESTIMATOR=grpo
 PROJECT_NAME='secretary-r1_gsm8k'
-EXPERIMENT_NAME='ppo_sft-Llama-3.2-3B-it-step12_em_swirl-v3_cal_no-kl_fmt-ans'
+EXPERIMENT_NAME='grpo_sft-Llama-3.2-3B-it-step12_em_swirl-v3_cal_kl1e-3_fmt'
 CHECKPOINT_DIR=/data/hyhping/checkpoints/agent-omni/gsm8k/$EXPERIMENT_NAME
 
 CUDA_VISIBLE_DEVICES=4,5,6,7 PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo \
@@ -18,7 +20,7 @@ CUDA_VISIBLE_DEVICES=4,5,6,7 PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo
     data.max_start_length=2048 \
     data.max_obs_length=200 \
     data.shuffle=True \
-    algorithm.adv_estimator=gae \
+    algorithm.adv_estimator=$ADV_ESTIMATOR \
     actor_rollout_ref.model.path=$BASE_MODEL \
     actor_rollout_ref.actor.optim.lr=1e-6 \
     actor_rollout_ref.model.enable_gradient_checkpointing=True \
@@ -39,7 +41,7 @@ CUDA_VISIBLE_DEVICES=4,5,6,7 PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo
     actor_rollout_ref.rollout.enforce_eager=False \
     actor_rollout_ref.rollout.free_cache_engine=False \
     actor_rollout_ref.rollout.disable_log_stats=False \
-    actor_rollout_ref.rollout.n_agent=1 \
+    actor_rollout_ref.rollout.n_agent=$N_AGENT \
     actor_rollout_ref.rollout.temperature=1 \
     actor_rollout_ref.rollout.top_p=1.0 \
     actor_rollout_ref.ref.fsdp_config.param_offload=True \
@@ -51,7 +53,7 @@ CUDA_VISIBLE_DEVICES=4,5,6,7 PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo
     critic.ppo_max_token_len_per_gpu=48000 \
     critic.model.fsdp_config.param_offload=False \
     critic.model.fsdp_config.optimizer_offload=False \
-    algorithm.use_kl_in_reward=False \
+    algorithm.use_kl_in_reward=True \
     algorithm.kl_penalty=low_var_kl \
     algorithm.kl_ctrl.kl_coef=0.001 \
     algorithm.no_think_rl=False \
@@ -62,7 +64,7 @@ CUDA_VISIBLE_DEVICES=4,5,6,7 PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo
     trainer.default_hdfs_dir=null \
     trainer.n_gpus_per_node=4 \
     trainer.nnodes=1 \
-    trainer.save_freq=20 \
+    trainer.save_freq=10 \
     trainer.test_freq=-1 \
     trainer.project_name=$PROJECT_NAME \
     trainer.experiment_name=$EXPERIMENT_NAME \

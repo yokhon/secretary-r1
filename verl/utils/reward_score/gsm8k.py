@@ -55,7 +55,8 @@ def extract_solution(solution_str, method='strict'):
 
 
 def is_string_valid_for_calculator(input_str):
-    pattern = r'^[x0-9+*/\-(). ]+$'
+    # pattern = r'^[x0-9+*/\-(). ]+$'
+    pattern = r'^[xypkmnjst0-9+*/\-(). ]+$'
     return re.fullmatch(pattern, input_str) is not None
 
 
@@ -70,6 +71,17 @@ def correct_tag_format(solution_str, tag):
         return True if len(content) > 0 and content != 'and' and content != '...' else False
     else:
         return False
+
+
+def correct_tag_format_count(solution_str, tag):
+    pattern = r'<(%s)>(.*?)</\1>' % tag
+    matches = re.findall(pattern, solution_str)
+    cnt = 0
+    for match in matches:
+        content = match[1].strip()
+        if is_string_valid_for_calculator(content):
+            cnt += 1
+    return min(cnt, 3)
 
 
 def compute_score(solution_str, ground_truth, method='strict', format_score=0.1, score=1.):
@@ -92,7 +104,8 @@ def compute_score(solution_str, ground_truth, method='strict', format_score=0.1,
     #         return score
     #     else:
     #         return format_score
-    correct_query_format = correct_tag_format(solution_str, TAG_WORD)
+    # correct_query_format = correct_tag_format(solution_str, TAG_WORD)
+    correct_query_format = correct_tag_format_count(solution_str, TAG_WORD)
     # correct_answer = correct_tag_format(solution_str, 'answer')
     correct_answer_format = True if answer is not None and len(answer) > 0 else False
     total_format_score = format_score * correct_query_format * 0.5 + format_score * correct_answer_format * 0.0
