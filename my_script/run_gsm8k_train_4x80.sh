@@ -1,14 +1,17 @@
 TRAIN_FILE=./data/my_gsm8k_swirl-v3/train.parquet
 VAL_FILE=./data/my_gsm8k_swirl-v3/test.parquet
 BASE_MODEL=/data/hyhping/checkpoints/global_step_12
-BATCH_SIZE=128
+BATCH_SIZE=256
 MINI_BATCH_SIZE=64
 VLLM_PARALLEL_SIZE=1
 GPU_MEMORY_UTIL=0.8
 N_AGENT=8
 ADV_ESTIMATOR=grpo
+CLIP_LOW=0.1
+CLIP_HIGH=0.2
+ACTOR_LR_WARMUP_RATIO=0.2
 PROJECT_NAME='secretary-r1_gsm8k'
-EXPERIMENT_NAME='grpo_sft-Llama-3.2-3B-it-step12_em_swirl-v3_cal_kl1e-3_fmt'
+EXPERIMENT_NAME='grpo_sft-Llama-3.2-3B-it-step12_em_swirl-v3_cal_kl1e-3_fmt-run_2'
 CHECKPOINT_DIR=/data/hyhping/checkpoints/agent-omni/gsm8k/$EXPERIMENT_NAME
 
 CUDA_VISIBLE_DEVICES=4,5,6,7 PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo \
@@ -25,7 +28,7 @@ CUDA_VISIBLE_DEVICES=4,5,6,7 PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo
     actor_rollout_ref.actor.optim.lr=1e-6 \
     actor_rollout_ref.model.enable_gradient_checkpointing=True \
     actor_rollout_ref.model.use_remove_padding=True \
-    actor_rollout_ref.actor.optim.lr_warmup_steps_ratio=0.0 \
+    actor_rollout_ref.actor.optim.lr_warmup_steps_ratio=$ACTOR_LR_WARMUP_RATIO \
     actor_rollout_ref.actor.ppo_mini_batch_size=$MINI_BATCH_SIZE \
     actor_rollout_ref.actor.use_dynamic_bsz=True \
     actor_rollout_ref.actor.ppo_max_token_len_per_gpu=24000 \
@@ -33,6 +36,8 @@ CUDA_VISIBLE_DEVICES=4,5,6,7 PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo
     actor_rollout_ref.actor.fsdp_config.optimizer_offload=False \
     actor_rollout_ref.actor.entropy_coeff=0.0 \
     actor_rollout_ref.actor.state_masking=True \
+    actor_rollout_ref.actor.clip_ratio_low=$CLIP_LOW \
+    actor_rollout_ref.actor.clip_ratio_high=$CLIP_HIGH \
     actor_rollout_ref.rollout.log_prob_micro_batch_size=128 \
     actor_rollout_ref.rollout.tensor_model_parallel_size=$VLLM_PARALLEL_SIZE \
     actor_rollout_ref.rollout.name=vllm \
@@ -56,6 +61,9 @@ CUDA_VISIBLE_DEVICES=4,5,6,7 PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo
     algorithm.use_kl_in_reward=True \
     algorithm.kl_penalty=low_var_kl \
     algorithm.kl_ctrl.kl_coef=0.001 \
+    algorithm.kl_ctrl.type=adaptive \
+    algorithm.kl_ctrl.horizon=100 \
+    algorithm.kl_ctrl.target_kl=0.01 \
     algorithm.no_think_rl=False \
     trainer.critic_warmup=0 \
     trainer.logger=['console','wandb'] \
@@ -69,7 +77,7 @@ CUDA_VISIBLE_DEVICES=4,5,6,7 PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo
     trainer.project_name=$PROJECT_NAME \
     trainer.experiment_name=$EXPERIMENT_NAME \
     trainer.total_epochs=10 \
-    trainer.total_training_steps=200 \
+    trainer.total_training_steps=100 \
     trainer.default_hdfs_dir=null \
     trainer.default_local_dir=$CHECKPOINT_DIR \
     max_turns=10 \
