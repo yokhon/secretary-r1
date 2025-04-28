@@ -4,6 +4,8 @@ from collections import defaultdict
 import os
 from typing import List, Dict, Any, Tuple
 from dataclasses import dataclass
+
+from verl.utils.reward_score.math_dapo import timeout
 from .tensor_helper import TensorHelper, TensorConfig
 from verl import DataProto
 from verl.utils.tracking import Tracking
@@ -473,7 +475,7 @@ If I want to give the final answer, I should put the answer between <answer> and
             "query_args": query_args,
         }
 
-        return requests.post(self.config.search_url, json=payload).json()
+        return requests.post(self.config.search_url, json=payload, timeout=300).json()
 
     def _passages2string(self, retrieval_result):
         format_reference = ''
