@@ -47,7 +47,7 @@ CUDA_VISIBLE_DEVICES=4,5,6,7 PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo
     actor_rollout_ref.rollout.free_cache_engine=False \
     actor_rollout_ref.rollout.disable_log_stats=False \
     actor_rollout_ref.rollout.n_agent=$N_AGENT \
-    actor_rollout_ref.rollout.temperature=1 \
+    actor_rollout_ref.rollout.temperature=1.2 \
     actor_rollout_ref.rollout.top_p=1.0 \
     actor_rollout_ref.ref.fsdp_config.param_offload=True \
     critic.optim.lr=1e-5 \
@@ -58,10 +58,10 @@ CUDA_VISIBLE_DEVICES=4,5,6,7 PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo
     critic.ppo_max_token_len_per_gpu=48000 \
     critic.model.fsdp_config.param_offload=False \
     critic.model.fsdp_config.optimizer_offload=False \
-    algorithm.use_kl_in_reward=False \
+    algorithm.use_kl_in_reward=True \
     algorithm.kl_penalty=low_var_kl \
     algorithm.kl_ctrl.kl_coef=0.001 \
-    algorithm.kl_ctrl.type=adaptive \
+    algorithm.kl_ctrl.type=fixed \
     algorithm.kl_ctrl.horizon=10000 \
     algorithm.kl_ctrl.target_kl=0.01 \
     algorithm.no_think_rl=False \
