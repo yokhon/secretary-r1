@@ -9,9 +9,9 @@ N_AGENT=8
 ADV_ESTIMATOR=grpo
 CLIP_LOW=0.1
 CLIP_HIGH=0.2
-ACTOR_LR_WARMUP_RATIO=0.2
+ACTOR_LR_WARMUP_RATIO=0.0
 PROJECT_NAME='secretary-r1_gsm8k'
-EXPERIMENT_NAME='grpo_sft-Llama-3.2-3B-it-step12_em_swirl-v3_cal_kl1e-3_fmt-run_2'
+EXPERIMENT_NAME='grpo_sft-Llama-3.2-3B-it-step12_em_swirl-v3_cal_kl1e-3_fmt-run_3'
 CHECKPOINT_DIR=/data/hyhping/checkpoints/agent-omni/gsm8k/$EXPERIMENT_NAME
 
 CUDA_VISIBLE_DEVICES=4,5,6,7 PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo \
@@ -58,7 +58,7 @@ CUDA_VISIBLE_DEVICES=4,5,6,7 PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo
     critic.ppo_max_token_len_per_gpu=48000 \
     critic.model.fsdp_config.param_offload=False \
     critic.model.fsdp_config.optimizer_offload=False \
-    algorithm.use_kl_in_reward=True \
+    algorithm.use_kl_in_reward=False \
     algorithm.kl_penalty=low_var_kl \
     algorithm.kl_ctrl.kl_coef=0.001 \
     algorithm.kl_ctrl.type=adaptive \
