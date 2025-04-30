@@ -1,17 +1,17 @@
-TRAIN_FILE=./data/my_gsm8k_swirl-v3/train.parquet
-VAL_FILE=./data/my_gsm8k_swirl-v3/test.parquet
-BASE_MODEL=/data/hyhping/checkpoints/global_step_12
-BATCH_SIZE=256
+TRAIN_FILE=./data/my_gsm8k_swirl-v6/train.parquet
+VAL_FILE=./data/my_gsm8k_swirl-v6/test.parquet
+BASE_MODEL=/data/hyhping/checkpoints/sft-Qwen3-4B/global_step_18
+BATCH_SIZE=128
 MINI_BATCH_SIZE=64
 VLLM_PARALLEL_SIZE=1
-GPU_MEMORY_UTIL=0.8
+GPU_MEMORY_UTIL=0.7
 N_AGENT=8
 ADV_ESTIMATOR=grpo
 CLIP_LOW=0.2
 CLIP_HIGH=0.2
 ACTOR_LR_WARMUP_RATIO=0.0
 PROJECT_NAME='secretary-r1_gsm8k'
-EXPERIMENT_NAME='grpo_sft-Llama-3.2-3B-it-step12_em_swirl-v3_cal_kl1e-3_fmt-run_5'
+EXPERIMENT_NAME='grpo_sft-Qwen3-4B-step18_em_swirl-v6_cal_kl1e-3_fmt-run_0'
 CHECKPOINT_DIR=/data/hyhping/checkpoints/agent-omni/gsm8k/$EXPERIMENT_NAME
 
 CUDA_VISIBLE_DEVICES=4,5,6,7 PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo \
@@ -73,7 +73,7 @@ CUDA_VISIBLE_DEVICES=4,5,6,7 PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo
     trainer.n_gpus_per_node=4 \
     trainer.nnodes=1 \
     trainer.save_freq=10 \
-    trainer.test_freq=10 \
+    trainer.test_freq=5 \
     trainer.project_name=$PROJECT_NAME \
     trainer.experiment_name=$EXPERIMENT_NAME \
     trainer.total_epochs=10 \
@@ -81,8 +81,8 @@ CUDA_VISIBLE_DEVICES=4,5,6,7 PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo
     trainer.default_hdfs_dir=null \
     trainer.default_local_dir=$CHECKPOINT_DIR \
     max_turns=10 \
-    tag_word='math_exp' \
+    tag_word='query' \
     retriever.url="http://10.120.16.175:30027/query" \
     retriever.query_type="math" \
-    retriever.prompt_type="calculator" \
+    retriever.prompt_type="tool-integrated" \
     retriever.topk=3 2>&1 | tee log/gsm8k-$EXPERIMENT_NAME.log

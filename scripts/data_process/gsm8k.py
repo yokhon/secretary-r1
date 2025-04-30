@@ -217,7 +217,7 @@ def make_prefix(dp, template_type):
         If you think it would help to use a calculator, please raise a mathematical query by <query>...</query> after <think>...</think>. \
         Some questions may benefit from using a calculator multiple times in order to answer, so I will allow you to make up to 10 sequential queries before answering the question. \
         Please do not repeat queries you have already issued, as this is a waste of time. \
-        When you have the final answer, you can output the answer inside <answer>...</answer>, without detailed illustrations. For example, <answer> 13 </answer>. \
+        When you have the final answer, you can output the answer inside <answer>...</answer>, without detailed illustrations. For example, <answer>13</answer>. \
         The question is: {question}\n"""
     else:
         raise NotImplementedError
