@@ -158,6 +158,18 @@ def make_prefix(dp, template_type):
         <think>...</think><answer>...</answer> \
         \n \
         Question: {question}\n"""
+    elif template_type == 't5':
+        prefix = f"""Answer the given question. You can raise query to answer the question. A junior helper with skills (such as searching the Internet or using a calculator) will handle the query and return the result. You can raise queries as many times as you want. \
+        You must first conduct reasoning inside <think>...</think>. If you find you lack some information or need further validation, you can raise a query by <query>...</query> after <think>...</think>. \
+        When you have the final answer, you can output the answer inside <answer>...</answer>, without detailed illustrations. For example, <answer>13</answer>. \
+        \n \
+        Output format for raise query: \
+        <think>...</think><query>...</query> \
+        \n \
+        Output format for answer: \
+        <think>...</think><answer>...</answer> \
+        \n \
+        Question: {question}\n"""
     elif template_type == 'swirl':
         prefix = f"""Please help me answer the following question in just a few words. \
         If you think it would help to use a calculator, please generate a mathematical query enclosed by <query>MATH EXP</query> tags. \
@@ -200,6 +212,13 @@ def make_prefix(dp, template_type):
         Answer: <think>Natalia sold 48/2 clips in May.</think><math_exp>48/2</math_exp><info>The result is 24.</info><think>Natalia sold 48+24 clips altogether in April and May.</think><math_exp>48+24</math_exp><info>The result is 72.</info><think>I have the answer.</think><answer>72</answer> \
         ### Example End ### \
         Now, please answer the following question as per the specified format: {question}\n"""
+    elif template_type == 'swirl-v6':
+        prefix = f"""Answer the given question. You must first conduct reasoning inside <think>...</think>. \
+        If you think it would help to use a calculator, please raise a mathematical query by <query>...</query> after <think>...</think>. \
+        Some questions may benefit from using a calculator multiple times in order to answer, so I will allow you to make up to 10 sequential queries before answering the question. \
+        Please do not repeat queries you have already issued, as this is a waste of time. \
+        When you have the final answer, you can output the answer inside <answer>...</answer>, without detailed illustrations. For example, <answer> 13 </answer>. \
+        The question is: {question}\n"""
     else:
         raise NotImplementedError
     return prefix
