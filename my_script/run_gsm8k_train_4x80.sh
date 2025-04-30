@@ -47,7 +47,7 @@ CUDA_VISIBLE_DEVICES=4,5,6,7 PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo
     actor_rollout_ref.rollout.free_cache_engine=False \
     actor_rollout_ref.rollout.disable_log_stats=False \
     actor_rollout_ref.rollout.n_agent=$N_AGENT \
-    actor_rollout_ref.rollout.temperature=1.2 \
+    actor_rollout_ref.rollout.temperature=1.0 \
     actor_rollout_ref.rollout.top_p=1.0 \
     actor_rollout_ref.ref.fsdp_config.param_offload=True \
     critic.optim.lr=1e-5 \
