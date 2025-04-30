@@ -7,11 +7,11 @@ VLLM_PARALLEL_SIZE=1
 GPU_MEMORY_UTIL=0.8
 N_AGENT=8
 ADV_ESTIMATOR=grpo
-CLIP_LOW=0.1
+CLIP_LOW=0.2
 CLIP_HIGH=0.2
 ACTOR_LR_WARMUP_RATIO=0.0
 PROJECT_NAME='secretary-r1_gsm8k'
-EXPERIMENT_NAME='grpo_sft-Llama-3.2-3B-it-step12_em_swirl-v3_cal_kl1e-3_fmt-run_4'
+EXPERIMENT_NAME='grpo_sft-Llama-3.2-3B-it-step12_em_swirl-v3_cal_kl1e-3_fmt-run_5'
 CHECKPOINT_DIR=/data/hyhping/checkpoints/agent-omni/gsm8k/$EXPERIMENT_NAME
 
 CUDA_VISIBLE_DEVICES=4,5,6,7 PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo \
