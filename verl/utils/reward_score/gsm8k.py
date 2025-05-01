@@ -76,12 +76,13 @@ def correct_tag_format(solution_str, tag):
 def correct_tag_format_count(solution_str, tag):
     pattern = r'<(%s)>(.*?)</\1>' % tag
     matches = re.findall(pattern, solution_str)
-    cnt = 0
-    for match in matches:
-        content = match[1].strip()
-        if is_string_valid_for_calculator(content):
-            cnt += 1
-    return min(cnt, 3)
+    # cnt = 0
+    # for match in matches:
+    #     content = match[1].strip()
+    #     if is_string_valid_for_calculator(content):
+    #         cnt += 1
+    # return min(cnt, 3)
+    return min(len(matches), 3)
 
 
 def compute_score(solution_str, ground_truth, method='strict', format_score=0.1, score=1.):
