@@ -15,7 +15,7 @@
 import re
 
 
-TAG_WORD = 'math_exp'
+TAG_WORD = 'query'
 
 def extract_solution(solution_str, method='strict'):
     assert method in ['strict', 'flexible']
