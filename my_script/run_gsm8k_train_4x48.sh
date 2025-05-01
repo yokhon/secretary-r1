@@ -1,17 +1,17 @@
-TRAIN_FILE=./data/my_gsm8k_swirl-v3/train.parquet
-VAL_FILE=./data/my_gsm8k_swirl-v3/test.parquet
-BASE_MODEL=/data2/share/hanxu/verl/checkpoints/agent-omni/gsm8k/sft-Llama-3.2-3B-Instruct/global_step_12
-BATCH_SIZE=256
+TRAIN_FILE=./data/my_gsm8k_swirl-v6/train.parquet
+VAL_FILE=./data/my_gsm8k_swirl-v6/test.parquet
+BASE_MODEL=/data2/share/hanxu/verl/checkpoints/agent-omni/gsm8k/sft-Qwen3-4B/global_step_18
+BATCH_SIZE=128
 MINI_BATCH_SIZE=32
 VLLM_PARALLEL_SIZE=2
 GPU_MEMORY_UTIL=0.7
 N_AGENT=8
 ADV_ESTIMATOR=grpo
-CLIP_LOW=0.1
+CLIP_LOW=0.2
 CLIP_HIGH=0.2
-ACTOR_LR_WARMUP_RATIO=0.2
+ACTOR_LR_WARMUP_RATIO=0.0
 PROJECT_NAME='secretary-r1_gsm8k'
-EXPERIMENT_NAME='grpo_sft-Llama-3.2-3B-it-step12_em_swirl-v3_cal_no-kl_fmt'
+EXPERIMENT_NAME='grpo_sft-Qwen3-4B-step18_em_swirl-v6_cal_kl1e-3_fmt_4x48_run-0'
 CHECKPOINT_DIR=/data2/share/hanxu/verl/checkpoints/agent-omni/gsm8k/$EXPERIMENT_NAME
 
 CUDA_VISIBLE_DEVICES=4,5,6,7 PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo \
@@ -47,7 +47,7 @@ CUDA_VISIBLE_DEVICES=4,5,6,7 PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo
     actor_rollout_ref.rollout.free_cache_engine=False \
     actor_rollout_ref.rollout.disable_log_stats=False \
     actor_rollout_ref.rollout.n_agent=$N_AGENT \
-    actor_rollout_ref.rollout.temperature=1.2 \
+    actor_rollout_ref.rollout.temperature=1.0 \
     actor_rollout_ref.rollout.top_p=1.0 \
     actor_rollout_ref.ref.fsdp_config.param_offload=True \
     critic.optim.lr=1e-5 \
@@ -58,10 +58,10 @@ CUDA_VISIBLE_DEVICES=4,5,6,7 PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo
     critic.ppo_max_token_len_per_gpu=48000 \
     critic.model.fsdp_config.param_offload=False \
     critic.model.fsdp_config.optimizer_offload=False \
-    algorithm.use_kl_in_reward=False \
+    algorithm.use_kl_in_reward=True \
     algorithm.kl_penalty=low_var_kl \
     algorithm.kl_ctrl.kl_coef=0.001 \
-    algorithm.kl_ctrl.type=adaptive \
+    algorithm.kl_ctrl.type=fixed \
     algorithm.kl_ctrl.horizon=10000 \
     algorithm.kl_ctrl.target_kl=0.01 \
     algorithm.no_think_rl=False \
@@ -72,7 +72,7 @@ CUDA_VISIBLE_DEVICES=4,5,6,7 PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo
     trainer.default_hdfs_dir=null \
     trainer.n_gpus_per_node=4 \
     trainer.nnodes=1 \
-    trainer.save_freq=10 \
+    trainer.save_freq=-1 \
     trainer.test_freq=10 \
     trainer.project_name=$PROJECT_NAME \
     trainer.experiment_name=$EXPERIMENT_NAME \
@@ -81,8 +81,8 @@ CUDA_VISIBLE_DEVICES=4,5,6,7 PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo
     trainer.default_hdfs_dir=null \
     trainer.default_local_dir=$CHECKPOINT_DIR \
     max_turns=10 \
-    tag_word='math_exp' \
+    tag_word='query' \
     retriever.url="http://10.120.16.175:30027/query" \
     retriever.query_type="math" \
-    retriever.prompt_type="calculator" \
+    retriever.prompt_type="tool-integrated" \
     retriever.topk=3 2>&1 | tee log/gsm8k-$EXPERIMENT_NAME.log
