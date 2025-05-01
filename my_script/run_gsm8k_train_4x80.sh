@@ -1,6 +1,6 @@
 TRAIN_FILE=./data/my_gsm8k_swirl-v6/train.parquet
 VAL_FILE=./data/my_gsm8k_swirl-v6/test.parquet
-BASE_MODEL=/data/hyhping/checkpoints/sft-Qwen3-4B/global_step_18
+BASE_MODEL=/data/hyhping/checkpoints/qwen3-4b/global_step_18
 BATCH_SIZE=128
 MINI_BATCH_SIZE=32
 VLLM_PARALLEL_SIZE=1
