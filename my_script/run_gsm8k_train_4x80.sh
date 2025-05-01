@@ -1,6 +1,6 @@
-TRAIN_FILE=./data/my_gsm8k_swirl-v6/train.parquet
-VAL_FILE=./data/my_gsm8k_swirl-v6/test.parquet
-BASE_MODEL=/data/hyhping/checkpoints/qwen3-4b/global_step_18
+TRAIN_FILE=./data/my_gsm8k_t5/train.parquet
+VAL_FILE=./data/my_gsm8k_t5/test.parquet
+BASE_MODEL=/data/hyhping/checkpoints/qwen3-4b-t5/global_step_12
 BATCH_SIZE=128
 MINI_BATCH_SIZE=32
 VLLM_PARALLEL_SIZE=1
@@ -11,7 +11,7 @@ CLIP_LOW=0.2
 CLIP_HIGH=0.2
 ACTOR_LR_WARMUP_RATIO=0.0
 PROJECT_NAME='secretary-r1_gsm8k'
-EXPERIMENT_NAME='grpo_sft-Qwen3-4B-step18_em_swirl-v6_cal_kl1e-3_fmt-run_0'
+EXPERIMENT_NAME='grpo_sft-Qwen3-4B-step12_em_t5_ti_kl1e-3_fmt-run_0'
 CHECKPOINT_DIR=/data/hyhping/checkpoints/agent-omni/gsm8k/$EXPERIMENT_NAME
 
 CUDA_VISIBLE_DEVICES=0,1,2,3 PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo \
@@ -72,12 +72,12 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo
     trainer.default_hdfs_dir=null \
     trainer.n_gpus_per_node=4 \
     trainer.nnodes=1 \
-    trainer.save_freq=10 \
+    trainer.save_freq=5 \
     trainer.test_freq=5 \
     trainer.project_name=$PROJECT_NAME \
     trainer.experiment_name=$EXPERIMENT_NAME \
     trainer.total_epochs=10 \
-    trainer.total_training_steps=100 \
+    trainer.total_training_steps=60 \
     trainer.default_hdfs_dir=null \
     trainer.default_local_dir=$CHECKPOINT_DIR \
     max_turns=10 \
