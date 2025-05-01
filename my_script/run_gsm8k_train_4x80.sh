@@ -14,7 +14,7 @@ PROJECT_NAME='secretary-r1_gsm8k'
 EXPERIMENT_NAME='grpo_sft-Qwen3-4B-step18_em_swirl-v6_cal_kl1e-3_fmt-run_0'
 CHECKPOINT_DIR=/data/hyhping/checkpoints/agent-omni/gsm8k/$EXPERIMENT_NAME
 
-CUDA_VISIBLE_DEVICES=4,5,6,7 PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo \
+CUDA_VISIBLE_DEVICES=0,1,2,3 PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo \
     data.train_files=$TRAIN_FILE \
     data.val_files=$VAL_FILE \
     data.train_batch_size=$BATCH_SIZE \
