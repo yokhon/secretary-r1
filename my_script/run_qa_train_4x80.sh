@@ -1,6 +1,6 @@
 TRAIN_FILE=./data/qa/nq_hotpotqa_t5/train.parquet
 VAL_FILE=./data/qa/nq_hotpotqa_t5/test.parquet
-BASE_MODEL=/data2/share/Qwen3/Qwen3-4B
+BASE_MODEL=/data/hyhping/checkpoints/Qwen3-4B
 BATCH_SIZE=128
 MINI_BATCH_SIZE=32
 VLLM_PARALLEL_SIZE=1
@@ -12,7 +12,7 @@ CLIP_HIGH=0.2
 ACTOR_LR_WARMUP_RATIO=0.95
 PROJECT_NAME='secretary-r1_qa'
 EXPERIMENT_NAME='grpo_n8_Qwen3-4B_em_t5_kl1e-3_etrp1e-3_4x80_run-0'
-CHECKPOINT_DIR=/data2/share/hanxu/verl/checkpoints/agent-omni/gsm8k/$EXPERIMENT_NAME
+CHECKPOINT_DIR=/data/hyhping/checkpoints/agent-omni/qa/$EXPERIMENT_NAME
 
 CUDA_VISIBLE_DEVICES=4,5,6,7 PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo \
     data.train_files=$TRAIN_FILE \
@@ -84,4 +84,4 @@ CUDA_VISIBLE_DEVICES=4,5,6,7 PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo
     tag_word='query' \
     retriever.url="http://10.120.16.175:30027/query" \
     retriever.query_type="search" \
-    retriever.topk=3 2>&1 | tee log/gsm8k-$EXPERIMENT_NAME.log
+    retriever.topk=3 2>&1 | tee log/qa-$EXPERIMENT_NAME.log

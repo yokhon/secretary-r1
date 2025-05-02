@@ -1,4 +1,4 @@
-WORK_DIR=/mnt/sdb/hanxu/projects/secretary-r1
+WORK_DIR=/home/asc1/hyhping/secretary-r1
 TEMP_TYPE=t5
 LOCAL_DIR=$WORK_DIR/data/qa/nq_hotpotqa_$TEMP_TYPE
 
