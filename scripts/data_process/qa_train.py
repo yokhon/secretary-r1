@@ -65,7 +65,7 @@ if __name__ == '__main__':
 
     for data_source in data_sources:
 
-        dataset = datasets.load_dataset('/data/hyhping/RUC-NLPIR/FlashRAG_datasets', data_source)
+        dataset = datasets.load_dataset('RUC-NLPIR/FlashRAG_datasets', data_source)
 
         train_dataset = dataset['train']
 

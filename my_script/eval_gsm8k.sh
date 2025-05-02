@@ -82,6 +82,7 @@ CUDA_VISIBLE_DEVICES=4,5,6,7 PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo
     trainer.default_local_dir=$CHECKPOINT_DIR \
     max_turns=0 \
     tag_word='query' \
+    do_search=False \
     retriever.url="http://10.120.16.175:30027/query" \
     retriever.query_type="math" \
     retriever.prompt_type="tool-integrated" \
