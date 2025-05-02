@@ -17,6 +17,8 @@ import string
 import random
 
 
+TAG_WORD = 'query'
+
 def normalize_answer(s):
     def remove_articles(text):
         return re.sub(r"\b(a|an|the)\b", " ", text)
@@ -83,6 +85,12 @@ def extract_solution(solution_str):
     return matches[-1].group(1).strip()
 
 
+def correct_tag_format_count(solution_str, tag):
+    pattern = r'<(%s)>(.*?)</\1>' % tag
+    matches = re.findall(pattern, solution_str)
+    return len(matches)
+
+
 def compute_score_em(solution_str, ground_truth, method='strict', format_score=0., score=1.):
     """The scoring function for exact match (EM).
 
@@ -102,13 +110,23 @@ def compute_score_em(solution_str, ground_truth, method='strict', format_score=0
         print(f"Extracted answer: {answer}")
         print(f"Solution string: {solution_str}")
 
+    total_format_score = 0.05 * min(correct_tag_format_count(solution_str, TAG_WORD), 1)
     if answer is None:
-        return 0
+        answer_score = 0.0
     else:
         if em_check(answer, ground_truth['target']):
-            return score
+            answer_score = score
         else:
-            return format_score
+            answer_score = 0.0
+    total_score = answer_score + total_format_score
+    return total_score
+    # if answer is None:
+    #     return 0
+    # else:
+    #     if em_check(answer, ground_truth['target']):
+    #         return score
+    #     else:
+    #         return format_score
 
 
 def compute_score_subem(solution_str, ground_truth, method='strict', format_score=0., score=1.):

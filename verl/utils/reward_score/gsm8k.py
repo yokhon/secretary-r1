@@ -109,7 +109,7 @@ def compute_score(solution_str, ground_truth, method='strict', format_score=0.1,
     correct_query_format = correct_tag_format_count(solution_str, TAG_WORD)
     # correct_answer = correct_tag_format(solution_str, 'answer')
     correct_answer_format = True if answer is not None and len(answer) > 0 else False
-    total_format_score = format_score * correct_query_format * 0.5 + format_score * correct_answer_format * 0.0
+    total_format_score = format_score * correct_query_format * 0.0 + format_score * correct_answer_format * 0.0
     answer_score = score if answer == ground_truth else 0.0
     total_score = answer_score + total_format_score
     return total_score
