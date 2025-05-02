@@ -10,8 +10,8 @@ ADV_ESTIMATOR=grpo
 CLIP_LOW=0.2
 CLIP_HIGH=0.2
 ACTOR_LR_WARMUP_RATIO=0.0
-PROJECT_NAME='secretary-r1_gsm8k'
-EXPERIMENT_NAME='eval_Qwen3-4B_em_base-no-cot_4x48'
+PROJECT_NAME='secretary-r1_gsm8k_eval'
+EXPERIMENT_NAME='Qwen3-4B_em_base-no-cot_4x48'
 CHECKPOINT_DIR=/data2/share/hanxu/verl/checkpoints/agent-omni/gsm8k/$EXPERIMENT_NAME
 
 CUDA_VISIBLE_DEVICES=4,5,6,7 PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo \
