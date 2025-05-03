@@ -11,7 +11,7 @@ CLIP_LOW=0.2
 CLIP_HIGH=0.2
 ACTOR_LR_WARMUP_RATIO=0.95
 PROJECT_NAME='secretary-r1_qa'
-EXPERIMENT_NAME='grpo_n8_Qwen3-4B_em_t5_kl1e-3_etrp1e-3_4x80_run-0'
+EXPERIMENT_NAME='grpo_n8_Qwen3-4B_em_t5_kl1e-3_4x80_run-0'
 CHECKPOINT_DIR=/data/hyhping/checkpoints/agent-omni/qa/$EXPERIMENT_NAME
 
 CUDA_VISIBLE_DEVICES=4,5,6,7 PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo \
@@ -34,7 +34,7 @@ CUDA_VISIBLE_DEVICES=4,5,6,7 PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo
     actor_rollout_ref.actor.ppo_max_token_len_per_gpu=24000 \
     actor_rollout_ref.actor.fsdp_config.param_offload=False \
     actor_rollout_ref.actor.fsdp_config.optimizer_offload=False \
-    actor_rollout_ref.actor.entropy_coeff=0.001 \
+    actor_rollout_ref.actor.entropy_coeff=0.0 \
     actor_rollout_ref.actor.state_masking=True \
     actor_rollout_ref.actor.clip_ratio_low=$CLIP_LOW \
     actor_rollout_ref.actor.clip_ratio_high=$CLIP_HIGH \
