@@ -1,5 +1,5 @@
 TRAIN_FILE=./data/qa/nq_hotpotqa_t5_eval/train.parquet
-VAL_FILE=./data/nq_hotpotqa_t5_eval/test.parquet
+VAL_FILE=./data/qa/nq_hotpotqa_t5_eval/test.parquet
 BASE_MODEL=/data2/share/hanxu/verl/checkpoints/agent-omni/gsm8k/grpo-qwen3-4b-em-t5-kl1e-3-fmt/global_step_10-hf
 BATCH_SIZE=128
 MINI_BATCH_SIZE=32
