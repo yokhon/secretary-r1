@@ -1,6 +1,6 @@
-TRAIN_FILE=./data/qa/nq_hotpotqa_t5_eval/train.parquet
-VAL_FILE=./data/qa/nq_hotpotqa_t5_eval/test.parquet
-BASE_MODEL=/data2/share/hanxu/verl/checkpoints/agent-omni/gsm8k/grpo-qwen3-4b-em-t5-kl1e-3-fmt/global_step_10-hf
+TRAIN_FILE=./data/qa/eval_multihop3_base/train.parquet
+VAL_FILE=./data/qa/eval_multihop3_base/test.parquet
+BASE_MODEL=/data2/share/Qwen3/Qwen3-4B
 BATCH_SIZE=128
 MINI_BATCH_SIZE=32
 VLLM_PARALLEL_SIZE=2
@@ -11,10 +11,10 @@ CLIP_LOW=0.2
 CLIP_HIGH=0.2
 ACTOR_LR_WARMUP_RATIO=0.0
 PROJECT_NAME='secretary-r1_qa_eval'
-EXPERIMENT_NAME='Qwen3-4B_em_t5_4x48'
+EXPERIMENT_NAME='Qwen3-4B_em_base_2x48'
 CHECKPOINT_DIR=/data2/share/hanxu/verl/checkpoints/agent-omni/qa/$EXPERIMENT_NAME
 
-CUDA_VISIBLE_DEVICES=4,5,6,7 PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo \
+CUDA_VISIBLE_DEVICES=6,7 PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo \
     data.train_files=$TRAIN_FILE \
     data.val_files=$VAL_FILE \
     data.train_batch_size=$BATCH_SIZE \
@@ -70,7 +70,7 @@ CUDA_VISIBLE_DEVICES=4,5,6,7 PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo
     +trainer.val_only=True \
     trainer.val_before_train=True \
     trainer.default_hdfs_dir=null \
-    trainer.n_gpus_per_node=4 \
+    trainer.n_gpus_per_node=2 \
     trainer.nnodes=1 \
     trainer.save_freq=-1 \
     trainer.test_freq=10 \
@@ -80,9 +80,9 @@ CUDA_VISIBLE_DEVICES=4,5,6,7 PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo
     trainer.total_training_steps=100 \
     trainer.default_hdfs_dir=null \
     trainer.default_local_dir=$CHECKPOINT_DIR \
-    max_turns=4 \
+    max_turns=0 \
     tag_word='query' \
-    do_search=True \
+    do_search=False \
     retriever.url="http://10.120.16.175:30027/query" \
     retriever.query_type="search" \
     retriever.topk=3 2>&1 | tee log/qa-$EXPERIMENT_NAME.log

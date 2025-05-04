@@ -1,6 +1,6 @@
 WORK_DIR=/home/asc1/hyhping/secretary-r1
 TEMP_TYPE=base
-LOCAL_DIR=$WORK_DIR/data/qa/multihop3_$TEMP_TYPE
+LOCAL_DIR=$WORK_DIR/data/qa/eval_multihop3_$TEMP_TYPE
 
 #process multiple dataset search format train file
 DATA=hotpotqa
