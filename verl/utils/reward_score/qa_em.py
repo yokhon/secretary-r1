@@ -110,7 +110,7 @@ def compute_score_em(solution_str, ground_truth, method='strict', format_score=0
         print(f"Extracted answer: {answer}")
         print(f"Solution string: {solution_str}")
 
-    total_format_score = 0.05 * min(correct_tag_format_count(solution_str, TAG_WORD), 2)
+    total_format_score = 0.0 * min(correct_tag_format_count(solution_str, TAG_WORD), 2)
     if answer is None:
         answer_score = 0.0
     else:

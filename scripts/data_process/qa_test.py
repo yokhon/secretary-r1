@@ -27,7 +27,14 @@ def make_prefix(dp, template_type):
     question = dp['question']
 
     # NOTE: also need to change reward_score/countdown.py
-    if template_type == 't1':
+    if template_type == 'cot':
+        prefix = f"""Answer the given question. \
+        You must conduct step by step reasoning before getting to the answer. \
+        After reasoning, please provide the answer inside <answer> and </answer>, without detailed illustrations. For example, <answer> 13 </answer>. Question: {question}\n"""
+    elif template_type == 'base':
+        prefix = f"""Answer the given question. \
+        Please provide the answer inside <answer> and </answer>, without detailed illustrations. For example, <answer> 13 </answer>. Question: {question}\n"""
+    elif template_type == 't1':
         prefix = f"""Answer the given question. \
         You must conduct reasoning inside <think> and </think> first every time you get new information. \
         After reasoning, if you find you lack some information, you can raise a query by <query> sub-question </query>. \
