@@ -1,5 +1,5 @@
-TRAIN_FILE=./data/my_gsm8k_swirl-v6/train.parquet
-VAL_FILE=./data/my_gsm8k_swirl-v6/test.parquet
+TRAIN_FILE=./data/my_gsm8k_t5/train.parquet
+VAL_FILE=./data/my_gsm8k_t5/test.parquet
 BASE_MODEL=/data2/share/hanxu/verl/checkpoints/agent-omni/gsm8k/sft-Qwen3-4B/global_step_18
 BATCH_SIZE=128
 MINI_BATCH_SIZE=32

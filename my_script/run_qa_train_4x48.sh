@@ -1,6 +1,6 @@
-TRAIN_FILE=./data/qa/nq_hotpotqa_t5/train.parquet
-VAL_FILE=./data/qa/nq_hotpotqa_t5/test.parquet
-BASE_MODEL=/data2/share/Qwen3/Qwen3-4B
+TRAIN_FILE=./data/qa/eval_multihop3_base/train.parquet
+VAL_FILE=./data/qa/eval_multihop3_base/test.parquet
+BASE_MODEL=/data2/share/Qwen3/Qwen3-4B-Base
 BATCH_SIZE=128
 MINI_BATCH_SIZE=32
 VLLM_PARALLEL_SIZE=2
@@ -9,9 +9,9 @@ N_AGENT=5
 ADV_ESTIMATOR=grpo
 CLIP_LOW=0.2
 CLIP_HIGH=0.2
-ACTOR_LR_WARMUP_RATIO=0.95
+ACTOR_LR_WARMUP_RATIO=0.285
 PROJECT_NAME='secretary-r1_qa'
-EXPERIMENT_NAME='grpo_n5_Qwen3-4B_em_t5_kl1e-3_etrp1e-3_4x48_run-0'
+EXPERIMENT_NAME='grpo_n5_Qwen3-4B-Base_em_multihop3_kl1e-3_etrp1e-3_4x48_run-0'
 CHECKPOINT_DIR=/data2/share/hanxu/verl/checkpoints/agent-omni/qa/$EXPERIMENT_NAME
 
 CUDA_VISIBLE_DEVICES=4,5,6,7 PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo \
@@ -77,7 +77,7 @@ CUDA_VISIBLE_DEVICES=4,5,6,7 PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo
     trainer.project_name=$PROJECT_NAME \
     trainer.experiment_name=$EXPERIMENT_NAME \
     trainer.total_epochs=10 \
-    trainer.total_training_steps=200 \
+    trainer.total_training_steps=300 \
     trainer.default_hdfs_dir=null \
     trainer.default_local_dir=$CHECKPOINT_DIR \
     max_turns=4 \
