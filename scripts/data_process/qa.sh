@@ -1,4 +1,4 @@
-WORK_DIR=/home/asc1/hyhping/secretary-r1
+WORK_DIR=/mnt/sdb/hanxu/projects/secretary-r1
 TEMP_TYPE=base
 LOCAL_DIR=$WORK_DIR/data/qa/eval_multihop3_$TEMP_TYPE
 
