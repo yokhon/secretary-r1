@@ -76,6 +76,9 @@ if __name__ == '__main__':
 
         train_dataset = dataset['train']
 
+        if data_source == 'hotpotqa':
+            train_dataset = train_dataset.filter(lambda x: x['metadata']['level'] != 'easy')
+
         # add a row to each data item that represents a unique id
         def make_map_fn(split):
 
