@@ -85,6 +85,21 @@ def correct_tag_format_count(solution_str, tag):
     return min(len(matches), 3)
 
 
+def remove_after_first_answer(text):
+    # Pattern to match everything up to and including the first complete answer tag pair
+    pattern = r'^.*?<answer>.*?</answer>'
+
+    # Find the match
+    match = re.search(pattern, text, re.DOTALL)
+
+    if match:
+        # Return the matched portion
+        return match.group(0)
+    else:
+        # If no answer tags found, return the original text
+        return text
+
+
 def compute_score(solution_str, ground_truth, method='strict', format_score=0.1, score=1.):
     """The scoring function for GSM8k.
 
@@ -97,6 +112,7 @@ def compute_score(solution_str, ground_truth, method='strict', format_score=0.1,
         format_score: the score for the format
         score: the score for the correct answer
     """
+    solution_str = remove_after_first_answer(solution_str)
     answer = extract_solution(solution_str=solution_str, method=method)
     # if answer is None:
     #     return 0

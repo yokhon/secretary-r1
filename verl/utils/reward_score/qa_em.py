@@ -91,6 +91,21 @@ def correct_tag_format_count(solution_str, tag):
     return len(matches)
 
 
+def remove_after_first_answer(text):
+    # Pattern to match everything up to and including the first complete answer tag pair
+    pattern = r'^.*?<answer>.*?</answer>'
+
+    # Find the match
+    match = re.search(pattern, text, re.DOTALL)
+
+    if match:
+        # Return the matched portion
+        return match.group(0)
+    else:
+        # If no answer tags found, return the original text
+        return text
+
+
 def compute_score_em(solution_str, ground_truth, method='strict', format_score=0., score=1.):
     """The scoring function for exact match (EM).
 
@@ -101,6 +116,7 @@ def compute_score_em(solution_str, ground_truth, method='strict', format_score=0
         format_score: the score for the format
         score: the score for the correct answer
     """
+    solution_str = remove_after_first_answer(solution_str)
     answer = extract_solution(solution_str=solution_str)
     do_print = random.randint(1, 64) == 1
 
@@ -110,7 +126,7 @@ def compute_score_em(solution_str, ground_truth, method='strict', format_score=0
         print(f"Extracted answer: {answer}")
         print(f"Solution string: {solution_str}")
 
-    total_format_score = 0.0 * min(correct_tag_format_count(solution_str, TAG_WORD), 2)
+    total_format_score = 0.02 * min(correct_tag_format_count(solution_str, TAG_WORD), 3)
     if answer is None:
         answer_score = 0.0
     else:
